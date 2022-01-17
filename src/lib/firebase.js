@@ -7,6 +7,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
+import { seedDatabase } from '../seed';
 
 //here you want to call seed files only onces
 
@@ -21,5 +22,9 @@ const config = {
 
  const Firebase = firebase.initializeApp(config);
  const { FieldValue } = firebase.firestore;
-console.log('FIREBASE THINGS', Firebase);
+    console.log('FIREBASE THINGS', Firebase);
+
+// seedDatabase(firebase);
+
+
 export { Firebase, FieldValue };
