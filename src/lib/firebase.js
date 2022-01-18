@@ -20,11 +20,11 @@ const config = {
     appId: "1:1004479547101:web:ea0171001c3c0c34febd34"
 }
 
- const Firebase = firebase.initializeApp(config);
+ const app = firebase.initializeApp(config);
  const { FieldValue } = firebase.firestore;
-    console.log('FIREBASE THINGS', Firebase);
+    //console.log('FIREBASE THINGS', Firebase);
 
 // seedDatabase(firebase);
 
 
-export { Firebase, FieldValue };
+export { app, FieldValue };

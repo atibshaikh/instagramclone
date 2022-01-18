@@ -4,11 +4,18 @@ import FirebaseContext from '../context/firebase';
 import {Link} from 'react-router-dom';
 import * as ROUTES from '../constants/routes';
 
-export default function Login(){
+
+import {doesUserExist} from '../services/firebase';
+
+
+export default function SignUp(){
 
     const history = useNavigate();
     const {app} = useContext(FirebaseContext);
     
+    const [username, setUsername] = useState('');
+    const [fullName, setFullName] = useState('');
+
     const [emailAddress, setEmailAddress] = useState('');
     const [password, setPassword] = useState('');
 
@@ -16,23 +23,51 @@ export default function Login(){
 
     const isInvalid = password === '' || emailAddress === '';
 
-    const handleLogin = async (event) => {
+    const handleSignUp = async (event) => {
         event.preventDefault();
         
-        try{
-            await app.auth().signInWithEmailAndPassword(emailAddress, password);
+        const usernameExists = await doesUserExist(username);
 
-            history.push(ROUTES.DASHBOARD);
-            
-        }catch (error){
-            setEmailAddress('');
-            setPassword('');
-            setError(error.message);
+        if(!usernameExists.length){
+            try{
+                const createdUserResult  = await app
+                      .auth()
+                      .createUserWithEmailAndPassword(emailAddress,password);
+
+                      await createdUserResult.user.updateProfile({
+                          displayName:username
+                      });
+
+                    await app.firestore().collection('users').add({
+                        userId: createdUserResult.user.uid,
+                        username:username.toLowerCase(),
+                        fullName,
+                        emailAddress:emailAddress.toLowerCase(),
+                        following:[],
+                        dateCreated:Date.now()
+                    })
+
+                    history.push(ROUTES.DASHBOARD);
+                                                 //authentication
+                                                 // => Email address & Password and username
+
+            }catch (error){
+                setFullName('');
+                setEmailAddress('');
+                setPassword('');
+                setUsername('');
+                setError(error.message);
+
+
+            }
+        }else{
+            setError("The username alreadu taken please try another username");
         }
+        
     };
 
     useEffect(() => {
-       document.title = 'Login - Instagram';
+       document.title = 'Sign Up - Instagram';
     }, [])
 
 
@@ -49,13 +84,31 @@ export default function Login(){
                     </h1>
                     {error && <p className='mb-4 text-xs text-red-primary'>{error}</p>}
 
-                    <form onSubmit={handleLogin} method='POST'>
+                    <form onSubmit={handleSignUp} method='POST'>
+                        <input
+                            aria-label="Enter your username"
+                            type="text"
+                            placeholder="Username"
+                            className="text-sm text-grey-base w-full mr-3 py-5 px-4 h-2 border border-gray-primary mb-2 rounded"
+                            onChange={({target}) => setUsername(target.value)}
+                            value={username}
+                        />
+                          <input
+                            aria-label="Enter your fullname"
+                            type="text"
+                            placeholder="Fullname"
+                            className="text-sm text-grey-base w-full mr-3 py-5 px-4 h-2 border border-gray-primary mb-2 rounded"
+                            onChange={({target}) => setFullName(target.value)}
+                            value={fullName}
+                        />
                         <input
                             aria-label="Enter your email address"
                             type="text"
                             placeholder="Email Address"
                             className="text-sm text-grey-base w-full mr-3 py-5 px-4 h-2 border border-gray-primary mb-2 rounded"
                             onChange={({target}) => setEmailAddress(target.value)}
+                            value={emailAddress}
+
                         />
                         <input
                             aria-label="Enter your password"
@@ -63,6 +116,8 @@ export default function Login(){
                             placeholder="Password"
                             className="text-sm text-grey-base w-full mr-3 py-5 px-4 h-2 border border-gray-primary mb-2 rounded"
                             onChange={({target}) => setPassword(target.value)}
+                            value={password}
+
                         />
 
                         <button
@@ -71,13 +126,13 @@ export default function Login(){
                             className={`bg-blue-medium text-white w-full h-8 rounded font-bold
                             ${isInvalid && ' opacity-50'}`}
                         >
-                            Submit
+                            Sign Up
                         </button>
                     </form>
                 </div>
                 <div className='flex justify-center items-center flex-col w-full rounded bg-white p-4 border border-gray-primary'>
-                    <p className='text-sm'>Don't have an account?{` `}
-                        <Link to="/signup" className="font-bold text-blue-medium" >  Sign Up </Link> 
+                    <p className='text-sm'>Have an account?{` `}
+                        <Link to={ROUTES.LOGIN} className="font-bold text-blue-medium" >  Login </Link> 
                     </p>
                 
                 </div>
