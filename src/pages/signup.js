@@ -10,7 +10,7 @@ import {doesUserExist} from '../services/firebase';
 
 export default function SignUp(){
 
-    const history = useNavigate();
+    const navigate = useNavigate();
     const {app} = useContext(FirebaseContext);
     
     const [username, setUsername] = useState('');
@@ -27,7 +27,7 @@ export default function SignUp(){
         event.preventDefault();
         
         const usernameExists = await doesUserExist(username);
-
+        console.log(usernameExists);
         if(!usernameExists.length){
             try{
                 const createdUserResult  = await app
@@ -47,7 +47,7 @@ export default function SignUp(){
                         dateCreated:Date.now()
                     })
 
-                    history.push(ROUTES.DASHBOARD);
+                    navigate(ROUTES.DASHBOARD);
                                                  //authentication
                                                  // => Email address & Password and username
 
@@ -61,7 +61,7 @@ export default function SignUp(){
 
             }
         }else{
-            setError("The username alreadu taken please try another username");
+            setError("The username already taken please try another username");
         }
         
     };

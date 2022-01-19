@@ -10,7 +10,7 @@ export async function doesUserExist(username){
                     .get();
     
     // console.log(result);
-    console.log(result.docs.length);
+    //console.log(result.docs.length);
 
 
     return result.docs.map( (user) => user.data().length > 0 );
