@@ -7,6 +7,8 @@ import { BrowserRouter as Router, Routes , Route, Link } from 'react-router-dom'
 
 const Login = lazy( () => import('./pages/login'));
 const Signup = lazy( () => import('./pages/signup'));
+const Dashboard = lazy( () => import('./pages/dashboard'));
+
 const NotFound = lazy( () => import('./pages/not-found'));
 
 // import react from "react";
@@ -18,6 +20,8 @@ function App() {
         <Routes>
           <Route path={ROUTES.LOGIN} element={<Login/>}></Route>
           <Route path={ROUTES.SIGN_UP} element={<Signup/>}></Route>
+          <Route path={ROUTES.DASHBOARD} element={<Dashboard/>}></Route>
+
           <Route path="*" element={<NotFound />}></Route>
 
 
