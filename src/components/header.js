@@ -6,10 +6,10 @@ import UserContext from "../context/user";
 import * as ROUTES from '../constants/routes';
 
 export default function Header(params) {
-      const {firebase} = useContext(FirebaseContext);
+      const {app} = useContext(FirebaseContext);
       const {user} =useContext(UserContext);
 
-      console.log(user);
+      //console.log(user);
 
       return (
 
@@ -47,10 +47,10 @@ export default function Header(params) {
                                                 <button
                                                       type="submit"
                                                       title="Sign Out"
-                                                      onClick={ () => { firebase.auth().signOut() }}
+                                                      onClick={ () => { app.auth().signOut() }}
                                                       onKeyDown={ (e) => {
                                                             if(e.key === 'Enter'){
-                                                                  firebase.auth().signOut()
+                                                                  app.auth().signOut()
                                                             }
                                                       }}
                                                       >
@@ -69,10 +69,23 @@ export default function Header(params) {
                                                             />
                                                             </svg>
                                                 </button>
+                                                <div className="flex items-center cursor-pointer">
+                                                      <Link to={`/p/${user.displayname}`}>
+                                                            <img className="rounded-full h-8 w-8 flex"
+                                                            src={`/images/avatars/${user.displayname}.jpg`}
+                                                            alt={`${user.displayname} Profile`} 
+                                                            />
+                                                      </Link>
+                                                </div>
                                                 </>
                                          ):(
                                                 <>
-                                                      
+                                                    <Link to={ROUTES.LOGIN} >
+                                                          <button type="button" className="bg-blue-medium font-bold text-sm rounded text-white w-20 h-8">Log In</button>
+                                                    </Link>
+                                                    <Link to={ROUTES.SIGN_UP}>
+                                                          <button type="button" className="font-bold text-sm rounded text-blue-medium w-20 h-8">Sign Up</button>
+                                                    </Link>  
                                                 </>
                                          )
                                      }
